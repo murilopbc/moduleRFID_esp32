@@ -4,7 +4,10 @@
 
 // Configurações do leitor RFID
 #define RST_PIN 2 // Pino de Reset do MFRC522
-#define SS_PIN 5  // Pino Slave Select do MFRC522
+#define SS_PIN 5 
+#define RED_PIN 4
+#define GREEN_PIN 15
+ // Pino Slave Select do MFRC522
 MFRC522 rfid(SS_PIN, RST_PIN);
 
 // Tamanho máximo para salvar UIDs
@@ -17,7 +20,9 @@ int tagCount = 0;
 void setup() {
   Serial.begin(115200);
   SPI.begin();         // Inicializa o barramento SPI
-  rfid.PCD_Init();     // Inicializa o leitor RFID
+  rfid.PCD_Init();
+  pinMode(RED_PIN, OUTPUT); 
+  pinMode(GREEN_PIN, OUTPUT);     // Inicializa o leitor RFID
 
   Serial.println("Aproxime a tag RFID para cadastrar...");
 }
@@ -37,10 +42,16 @@ void loop() {
   // Verifica se a tag já foi cadastrada
   if (isTagRegistered(uid)) {
     Serial.println("Tag já cadastrada!");
+    digitalWrite(GREEN_PIN, HIGH);
+    delay(2000);
+    digitalWrite(GREEN_PIN, LOW);
   } else {
     if (tagCount < MAX_TAGS) {
       saveTag(uid);
       Serial.println("Tag cadastrada com sucesso!");
+      digitalWrite(RED_PIN, HIGH);
+    delay(2000);
+    digitalWrite(RED_PIN, LOW);
     } else {
       Serial.println("Limite de tags cadastradas atingido!");
     }
